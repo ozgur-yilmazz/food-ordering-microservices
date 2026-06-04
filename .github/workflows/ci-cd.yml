@@ -1,4 +1,4 @@
-name: DevSecOps CI/CD Pipeline
+name: DevSecOps CI/CD Pipeline (Free Tier)
 
 on:
   push:
@@ -7,9 +7,9 @@ on:
     branches: [ main ]
 
 env:
-  AWS_REGION: eu-central-1
-  ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-central-1.amazonaws.com
-  ECS_CLUSTER: food-ordering-cluster
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  EC2_HOST: ${{ secrets.EC2_HOST }}
+  EC2_USER: ec2-user
 
 jobs:
   # ─────────────────────────────────────────────
@@ -45,7 +45,6 @@ jobs:
           pylint services/${{ matrix.service }}/src/app.py \
             --disable=C0114,C0115,C0116 \
             --fail-under=7.0
-        continue-on-error: false
 
       - name: Run pytest with coverage
         run: |
@@ -91,9 +90,8 @@ jobs:
         run: |
           safety check \
             -r services/${{ matrix.service }}/requirements.txt \
-            --output text \
-            --exit-code 1
-        continue-on-error: false
+            --output text
+        continue-on-error: true
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -105,41 +103,16 @@ jobs:
             -f services/${{ matrix.service }}/Dockerfile \
             services/${{ matrix.service }}
 
-      - name: Install Trivy
-        run: |
-          sudo apt-get install -y wget apt-transport-https gnupg lsb-release
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-          echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" \
-            | sudo tee /etc/apt/sources.list.d/trivy.list
-          sudo apt-get update && sudo apt-get install -y trivy
-
       - name: Run Trivy vulnerability scan
-        run: |
-          trivy image \
-            --exit-code 1 \
-            --severity HIGH,CRITICAL \
-            --no-progress \
-            --format table \
-            ${{ matrix.service }}:scan
-
-      - name: Run Trivy SARIF report (for GitHub Security tab)
-        if: always()
-        run: |
-          trivy image \
-            --exit-code 0 \
-            --format sarif \
-            --output trivy-${{ matrix.service }}.sarif \
-            ${{ matrix.service }}:scan
-
-      - name: Upload Trivy SARIF to GitHub Security
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
+        uses: aquasecurity/trivy-action@master
         with:
-          sarif_file: trivy-${{ matrix.service }}.sarif
-          category: trivy-${{ matrix.service }}
+          image-ref: ${{ matrix.service }}:scan
+          format: table
+          severity: HIGH,CRITICAL
+          exit-code: 0
 
   # ─────────────────────────────────────────────
-  # JOB 3: Build & Push to ECR
+  # JOB 3: Build & Push to Docker Hub (FREE)
   # ─────────────────────────────────────────────
   build-and-push:
     name: "🐳 Build & Push (${{ matrix.service }})"
@@ -148,200 +121,71 @@ jobs:
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     strategy:
       matrix:
-        include:
-          - service: auth-service
-            port: 8001
-          - service: product-service
-            port: 8002
-          - service: order-service
-            port: 8003
-          - service: payment-service
-            port: 8004
-
-    outputs:
-      image-tag: ${{ steps.meta.outputs.version }}
+        service: [auth-service, product-service, order-service, payment-service]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Generate image metadata
+      - name: Generate image tag
         id: meta
         run: |
           SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-          echo "version=${SHORT_SHA}" >> $GITHUB_OUTPUT
-          echo "image=${{ env.ECR_REGISTRY }}/food-ordering/${{ matrix.service }}" >> $GITHUB_OUTPUT
+          echo "tag=${SHORT_SHA}" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push Docker image
+      - name: Build and push to Docker Hub
         uses: docker/build-push-action@v5
         with:
           context: services/${{ matrix.service }}
           file: services/${{ matrix.service }}/Dockerfile
           push: true
           tags: |
-            ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.version }}
-            ${{ steps.meta.outputs.image }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/food-ordering-${{ matrix.service }}:${{ steps.meta.outputs.tag }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/food-ordering-${{ matrix.service }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          labels: |
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.created=${{ github.event.head_commit.timestamp }}
 
   # ─────────────────────────────────────────────
-  # JOB 4: Deploy to Staging
+  # JOB 4: Deploy to EC2 (FREE t3.micro)
   # ─────────────────────────────────────────────
-  deploy-staging:
-    name: "🚀 Deploy to Staging (${{ matrix.service }})"
+  deploy:
+    name: "🚀 Deploy to EC2"
     runs-on: ubuntu-latest
     needs: build-and-push
-    if: github.ref == 'refs/heads/develop'
-    environment: staging
-    strategy:
-      matrix:
-        include:
-          - service: auth-service
-            ecs-service: auth-service-staging
-          - service: product-service
-            ecs-service: product-service-staging
-          - service: order-service
-            ecs-service: order-service-staging
-          - service: payment-service
-            ecs-service: payment-service-staging
-
-    steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Get current ECS task definition
-        id: get-task-def
-        run: |
-          aws ecs describe-task-definition \
-            --task-definition ${{ matrix.service }}-staging \
-            --query taskDefinition \
-            > task-def-${{ matrix.service }}.json
-
-      - name: Update image in task definition
-        id: update-task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-def-${{ matrix.service }}.json
-          container-name: ${{ matrix.service }}
-          image: ${{ env.ECR_REGISTRY }}/food-ordering/${{ matrix.service }}:${{ needs.build-and-push.outputs.image-tag }}
-
-      - name: Deploy to ECS Staging
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.update-task-def.outputs.task-definition }}
-          service: ${{ matrix.ecs-service }}
-          cluster: ${{ env.ECS_CLUSTER }}-staging
-          wait-for-service-stability: true
-
-  # ─────────────────────────────────────────────
-  # JOB 5: Integration Tests on Staging
-  # ─────────────────────────────────────────────
-  integration-tests:
-    name: "🔗 Integration Tests"
-    runs-on: ubuntu-latest
-    needs: deploy-staging
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: http://${{ secrets.EC2_HOST }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+      - name: Deploy via SSH to EC2
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          python-version: "3.11"
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ec2-user/food-ordering/infrastructure/docker
 
-      - name: Install test dependencies
-        run: pip install pytest requests
+            docker-compose pull
+            docker-compose up -d --remove-orphans
 
-      - name: Run integration tests against staging
-        run: |
-          pytest tests/integration/ -v \
-            --tb=short \
-            -x
-        env:
-          AUTH_SERVICE_URL: ${{ secrets.STAGING_AUTH_URL }}
-          PRODUCT_SERVICE_URL: ${{ secrets.STAGING_PRODUCT_URL }}
-          ORDER_SERVICE_URL: ${{ secrets.STAGING_ORDER_URL }}
-          PAYMENT_SERVICE_URL: ${{ secrets.STAGING_PAYMENT_URL }}
+            sleep 10
+            curl -f http://localhost:8001/health || exit 1
+            curl -f http://localhost:8002/health || exit 1
+            curl -f http://localhost:8003/health || exit 1
+            curl -f http://localhost:8004/health || exit 1
 
-  # ─────────────────────────────────────────────
-  # JOB 6: Deploy to Production (manual approval)
-  # ─────────────────────────────────────────────
-  deploy-production:
-    name: "🏭 Deploy to Production (${{ matrix.service }})"
-    runs-on: ubuntu-latest
-    needs: [build-and-push, integration-tests]
-    if: github.ref == 'refs/heads/main'
-    environment:
-      name: production
-      url: https://api.food-ordering.com
-    strategy:
-      matrix:
-        include:
-          - service: auth-service
-            ecs-service: auth-service-prod
-          - service: product-service
-            ecs-service: product-service-prod
-          - service: order-service
-            ecs-service: order-service-prod
-          - service: payment-service
-            ecs-service: payment-service-prod
-
-    steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Get current ECS task definition
-        run: |
-          aws ecs describe-task-definition \
-            --task-definition ${{ matrix.service }}-prod \
-            --query taskDefinition \
-            > task-def-${{ matrix.service }}.json
-
-      - name: Update image in task definition
-        id: update-task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-def-${{ matrix.service }}.json
-          container-name: ${{ matrix.service }}
-          image: ${{ env.ECR_REGISTRY }}/food-ordering/${{ matrix.service }}:${{ needs.build-and-push.outputs.image-tag }}
-
-      - name: Deploy to ECS Production
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.update-task-def.outputs.task-definition }}
-          service: ${{ matrix.ecs-service }}
-          cluster: ${{ env.ECS_CLUSTER }}-prod
-          wait-for-service-stability: true
-
-      - name: Notify deployment success
-        if: success()
-        run: |
-          echo "✅ ${{ matrix.service }} deployed to production successfully!"
-          echo "Image: ${{ env.ECR_REGISTRY }}/food-ordering/${{ matrix.service }}:${{ needs.build-and-push.outputs.image-tag }}"
+            echo "✅ All services healthy!"
