@@ -23,8 +23,8 @@
 ## 🎯 Phase 1: Project Setup & Planning
 
 ### General Tasks (All Team Members)
-- [ ] Initialize Git repository
-- [ ] Create project structure
+ [ + ] Initialize Git repository
+ [ + ] Create project structure
 - [ ] Setup development environment
 - [ ] Document API contracts between services
 - [ ] Setup team communication channels
@@ -167,7 +167,7 @@
 ### 🔐 Auth Service (Port 8001)
 
 #### Service Setup
-- [ ] Initialize Node.js/Python project
+- [ ] Initialize Python project
 - [ ] Setup project structure (MVC/Clean Architecture)
 - [ ] Configure environment variables
 - [ ] Setup database connection
@@ -198,7 +198,7 @@
 ### 💳 Payment Service (Port 8004)
 
 #### Service Setup
-- [ ] Initialize Node.js/Python project
+- [ ] Initialize Python project
 - [ ] Setup project structure
 - [ ] Configure environment variables
 - [ ] Setup database connection
