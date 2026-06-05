@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodMicro — Lezzetin Adresi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-icon">🍕</span>
+      <span class="logo-text">Food<span>Micro</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Ana Sayfa</a></li>
+      <li><a href="menu.html">Menü</a></li>
+      <li><a href="orders.html">Siparişlerim</a></li>
+      <li><a href="#architecture">Mimari</a></li>
+      <li><a href="#team">Ekip</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="nav-auth" style="display:flex;gap:.75rem;align-items:center;">
+        <a href="auth.html"><button class="btn-ghost">Giriş Yap</button></a>
+        <a href="auth.html"><button class="btn-primary">Kayıt Ol</button></a>
+      </div>
+      <button class="cart-btn" onclick="openCart()">
+        🛒
+        <span class="cart-badge">0</span>
+      </button>
+      <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">☰</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="nav-mobile">
+  <a href="index.html">🏠 Ana Sayfa</a>
+  <a href="menu.html">🍽️ Menü</a>
+  <a href="orders.html">📦 Siparişlerim</a>
+  <a href="auth.html">🔐 Giriş / Kayıt</a>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge">⚡ Mikroservis Mimarisi ile Güçlendirilmiş</div>
+      <h1 class="hero-title">
+        Lezzetin<br>
+        <span class="gradient-text">Kapınıza</span><br>
+        Gelsin
+      </h1>
+      <p class="hero-subtitle">
+        AWS üzerinde çalışan dört mikroservisten oluşan modern yemek sipariş platformu. Hızlı, güvenli ve ölçeklenebilir.
+      </p>
+      <div class="hero-actions">
+        <a href="menu.html"><button class="btn-hero-primary">🍽️ Menüyü Keşfet</button></a>
+        <a href="#architecture"><button class="btn-hero-secondary">📊 Mimariyi Gör</button></a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-number">4</span>
+          <span class="hero-stat-label">Mikroservis</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-number">AWS</span>
+          <span class="hero-stat-label">Cloud</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-number">99.9%</span>
+          <span class="hero-stat-label">Uptime</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-number">SSL</span>
+          <span class="hero-stat-label">Güvenlik</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-circle">
+        <span class="hero-emoji-main">🍕</span>
+        <span class="floating-emoji">🍔</span>
+        <span class="floating-emoji">🥗</span>
+        <span class="floating-emoji">🍜</span>
+        <span class="floating-emoji">🍰</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-badge">Neden Biz?</span>
+      <h2 class="section-title">Üstün Deneyim</h2>
+      <p class="section-subtitle">Modern bulut teknolojisi ile kusursuz bir yemek sipariş deneyimi</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">⚡</span>
+        <h3 class="feature-title">Hızlı Teslimat</h3>
+        <p class="feature-desc">AWS ALB ve ECS Auto Scaling sayesinde yüksek trafik altında bile anında yanıt. Siparişiniz hızla kapınızda.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔒</span>
+        <h3 class="feature-title">Güvenli Ödeme</h3>
+        <p class="feature-desc">SSL/TLS şifreleme, JWT kimlik doğrulama ve PCI DSS uyumlu ödeme servisi ile verileriniz koruma altında.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📋</span>
+        <h3 class="feature-title">Geniş Menü</h3>
+        <p class="feature-desc">Burgerden pizzaya, salatadan tatlıya geniş seçenek yelpazesi. Her damak tadına uygun lezzetler.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">☁️</span>
+        <h3 class="feature-title">AWS Altyapı</h3>
+        <p class="feature-desc">Multi-AZ RDS, ECS Cluster ve Application Load Balancer ile %99.9 uptime garantisi.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ARCHITECTURE ===== -->
+<section class="section architecture-section" id="architecture">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-badge">Teknik</span>
+      <h2 class="section-title">Sistem Mimarisi</h2>
+      <p class="section-subtitle">AWS 3 katmanlı güvenlik mimarisi ile kurulmuş, ölçeklenebilir mikroservis yapısı</p>
+    </div>
+    <div class="arch-diagram">
+
+      <!-- Client -->
+      <div class="arch-layer">
+        <div class="arch-node wide">
+          <span class="arch-node-icon">🌐</span>
+          <div class="arch-node-title">Client / Browser</div>
+          <div class="arch-node-desc">HTTPS Requests — Port 443</div>
+        </div>
+      </div>
+      <div class="arch-arrow">↓</div>
+
+      <!-- ALB -->
+      <div class="arch-layer">
+        <div class="arch-node wide">
+          <span class="arch-node-icon">⚖️</span>
+          <div class="arch-node-title">Application Load Balancer</div>
+          <div class="arch-node-port">Port 443 (HTTPS) — Public Subnet</div>
+          <div class="arch-node-desc">Round Robin • Auto Scaling 2–10 • ACM SSL</div>
+        </div>
+      </div>
+      <div class="arch-arrow">↓</div>
+
+      <!-- ECS Services -->
+      <div class="arch-layer">
+        <div class="arch-services">
+          <div class="arch-service">
+            <span class="arch-node-icon">🔐</span>
+            <div class="arch-node-title">Auth Service</div>
+            <div class="arch-node-port">:8001</div>
+            <div class="arch-node-desc">JWT • bcrypt</div>
+          </div>
+          <div class="arch-service">
+            <span class="arch-node-icon">🍽️</span>
+            <div class="arch-node-title">Product Service</div>
+            <div class="arch-node-port">:8002</div>
+            <div class="arch-node-desc">Menü • Katalog</div>
+          </div>
+          <div class="arch-service">
+            <span class="arch-node-icon">📦</span>
+            <div class="arch-node-title">Order Service</div>
+            <div class="arch-node-port">:8003</div>
+            <div class="arch-node-desc">Sipariş • Durum</div>
+          </div>
+          <div class="arch-service">
+            <span class="arch-node-icon">💳</span>
+            <div class="arch-node-title">Payment Service</div>
+            <div class="arch-node-port">:8004</div>
+            <div class="arch-node-desc">Stripe • PCI DSS</div>
+          </div>
+        </div>
+      </div>
+      <div class="arch-arrow" style="margin-top:8px">↓</div>
+
+      <!-- RDS -->
+      <div class="arch-layer">
+        <div class="arch-node db">
+          <span class="arch-node-icon">🗄️</span>
+          <div class="arch-node-title">MySQL RDS Multi-AZ</div>
+          <div class="arch-node-port">Port 3306 — Database Subnet</div>
+          <div class="arch-node-desc">Primary (AZ-A) + Standby (AZ-B) — Sync Replication</div>
+        </div>
+      </div>
+
+      <!-- Security Groups Legend -->
+      <div class="arch-sg-row">
+        <div class="arch-sg">
+          <div class="arch-sg-label">SECURITY GROUP 1</div>
+          <div class="arch-sg-value" style="color:var(--secondary)">⚖️ ALB — Port 443 in</div>
+        </div>
+        <div class="arch-sg">
+          <div class="arch-sg-label">SECURITY GROUP 2</div>
+          <div class="arch-sg-value" style="color:var(--primary)">🐳 ECS — Port 8001–8004</div>
+        </div>
+        <div class="arch-sg">
+          <div class="arch-sg-label">SECURITY GROUP 3</div>
+          <div class="arch-sg-value" style="color:#64C8FF">🗄️ RDS — Port 3306 only</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== POPULAR MENU ===== -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-badge">Öne Çıkanlar</span>
+      <h2 class="section-title">Popüler Lezzetler</h2>
+      <p class="section-subtitle">En çok tercih edilen ürünlerimizden bir seçki</p>
+    </div>
+    <div class="menu-scroll-container">
+      <div class="menu-preview-card"><span class="menu-card-emoji">🍔</span><div class="menu-card-name">Klasik Cheeseburger</div><div class="menu-card-desc">Özel sos, çift köfte, çedar</div><div class="menu-card-bottom"><span class="menu-card-price">129 ₺</span><span class="menu-card-rating">⭐ 4.8</span></div></div>
+      <div class="menu-preview-card"><span class="menu-card-emoji">🍕</span><div class="menu-card-name">Margherita Pizza</div><div class="menu-card-desc">Domates sosu, mozarella, fesleğen</div><div class="menu-card-bottom"><span class="menu-card-price">159 ₺</span><span class="menu-card-rating">⭐ 4.7</span></div></div>
+      <div class="menu-preview-card"><span class="menu-card-emoji">🥩</span><div class="menu-card-name">Dana Biftek</div><div class="menu-card-desc">250g et, mantar sos, patates</div><div class="menu-card-bottom"><span class="menu-card-price">329 ₺</span><span class="menu-card-rating">⭐ 4.9</span></div></div>
+      <div class="menu-preview-card"><span class="menu-card-emoji">🍰</span><div class="menu-card-name">Lav Kek</div><div class="menu-card-desc">Sıcak çikolata sosu, dondurma</div><div class="menu-card-bottom"><span class="menu-card-price">69 ₺</span><span class="menu-card-rating">⭐ 4.7</span></div></div>
+      <div class="menu-preview-card"><span class="menu-card-emoji">🥗</span><div class="menu-card-name">Akdeniz Salata</div><div class="menu-card-desc">Taze malzemeler, beyaz peynir</div><div class="menu-card-bottom"><span class="menu-card-price">99 ₺</span><span class="menu-card-rating">⭐ 4.6</span></div></div>
+      <div class="menu-preview-card"><span class="menu-card-emoji">☕</span><div class="menu-card-name">Türk Kahvesi</div><div class="menu-card-desc">Geleneksel, lokum ile servis</div><div class="menu-card-bottom"><span class="menu-card-price">29 ₺</span><span class="menu-card-rating">⭐ 4.9</span></div></div>
+      <div class="menu-preview-card"><span class="menu-card-emoji">🍗</span><div class="menu-card-name">Izgara Tavuk</div><div class="menu-card-desc">Baharatlı ızgara, pilav, salata</div><div class="menu-card-bottom"><span class="menu-card-price">169 ₺</span><span class="menu-card-rating">⭐ 4.8</span></div></div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem;">
+      <a href="menu.html"><button class="btn-hero-primary">Tüm Menüyü Gör →</button></a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TEAM ===== -->
+<section class="section" id="team" style="background:var(--bg-2)">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-badge">Ekibimiz</span>
+      <h2 class="section-title">Geliştirme Ekibi</h2>
+      <p class="section-subtitle">Bu projeyi hayata geçiren yetenekli ekibimiz</p>
+    </div>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">ÖY</div>
+        <div class="team-name">Özgür Yılmaz</div>
+        <div class="team-role">Infrastructure & DevOps Lead</div>
+        <div class="team-skills">
+          <span class="skill-tag">AWS</span>
+          <span class="skill-tag">Docker</span>
+          <span class="skill-tag">Terraform</span>
+          <span class="skill-tag">GitHub Actions</span>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">MDÖ</div>
+        <div class="team-name">Mustafa Doğan Özgün</div>
+        <div class="team-role">Backend Services & Database Lead</div>
+        <div class="team-skills">
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">Flask</span>
+          <span class="skill-tag">MySQL</span>
+          <span class="skill-tag">JWT</span>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">ZA</div>
+        <div class="team-name">Zeynep Altundal</div>
+        <div class="team-role">Application Services & Integration Lead</div>
+        <div class="team-skills">
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">REST API</span>
+          <span class="skill-tag">Testing</span>
+          <span class="skill-tag">Integration</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="section cta-section">
+  <div class="section-inner">
+    <div class="cta-inner">
+      <span class="cta-icon">🚀</span>
+      <h2 class="cta-title">Hemen Sipariş Vermeye Başla</h2>
+      <p class="cta-desc">Kayıt ol, menüyü keşfet ve lezzetli yemeklerin kapınıza gelmesini izle. Hızlı ve ücretsiz kayıt.</p>
+      <div class="cta-actions">
+        <a href="auth.html"><button class="btn-hero-primary">🍽️ Ücretsiz Kayıt Ol</button></a>
+        <a href="menu.html"><button class="btn-hero-secondary">📋 Menüye Bak</button></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <span>🍕</span>
+        <span>Food<span style="color:var(--primary)">Micro</span></span>
+      </div>
+      <p class="footer-desc">AWS mikroservis mimarisi üzerine kurulu modern yemek sipariş platformu. Güvenli, hızlı ve ölçeklenebilir.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <ul class="footer-links">
+        <li><a href="menu.html">Menü</a></li>
+        <li><a href="orders.html">Siparişlerim</a></li>
+        <li><a href="auth.html">Giriş Yap</a></li>
+        <li><a href="auth.html">Kayıt Ol</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Servisler</h4>
+      <ul class="footer-links">
+        <li><a href="#">Auth :8001</a></li>
+        <li><a href="#">Product :8002</a></li>
+        <li><a href="#">Order :8003</a></li>
+        <li><a href="#">Payment :8004</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Ekip</h4>
+      <ul class="footer-links">
+        <li><a href="#">Özgür Yılmaz</a></li>
+        <li><a href="#">Mustafa Doğan Özgün</a></li>
+        <li><a href="#">Zeynep Altundal</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2026 FoodMicro. Tüm hakları saklıdır.</span>
+    <div class="footer-tech">
+      <span class="tech-tag">Python Flask</span>
+      <span class="tech-tag">Docker</span>
+      <span class="tech-tag">AWS ECS</span>
+      <span class="tech-tag">MySQL RDS</span>
+      <span class="tech-tag">GitHub Actions</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== CART SIDEBAR ===== -->
+<div class="cart-overlay" onclick="closeCart()"></div>
+<div class="cart-sidebar">
+  <div class="cart-header">
+    <h3 class="cart-title">🛒 Sepetim</h3>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span>Toplam:</span>
+      <span class="cart-total-price">0 ₺</span>
+    </div>
+    <button class="btn-checkout" onclick="checkout()">✓ Siparişi Tamamla</button>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+
+<script src="js/api.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

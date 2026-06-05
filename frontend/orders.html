@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Siparişlerim — FoodMicro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar scrolled">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-icon">🍕</span>
+      <span class="logo-text">Food<span>Micro</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Ana Sayfa</a></li>
+      <li><a href="menu.html">Menü</a></li>
+      <li><a href="orders.html" class="active">Siparişlerim</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="nav-auth" style="display:flex;gap:.75rem;align-items:center;">
+        <a href="auth.html"><button class="btn-ghost">Giriş Yap</button></a>
+        <a href="auth.html"><button class="btn-primary">Kayıt Ol</button></a>
+      </div>
+      <button class="cart-btn" onclick="openCart()">
+        🛒
+        <span class="cart-badge">0</span>
+      </button>
+      <button class="nav-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')">☰</button>
+    </div>
+  </div>
+</nav>
+
+<div class="nav-mobile">
+  <a href="index.html">🏠 Ana Sayfa</a>
+  <a href="menu.html">🍽️ Menü</a>
+  <a href="orders.html">📦 Siparişlerim</a>
+  <a href="auth.html">🔐 Giriş / Kayıt</a>
+</div>
+
+<!-- ===== PAGE HERO ===== -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <h1 class="page-title">📦 Siparişlerim</h1>
+    <p class="page-subtitle">Tüm geçmiş ve aktif siparişlerinizi buradan takip edin</p>
+  </div>
+</div>
+
+<!-- ===== ORDERS ===== -->
+<section class="section" style="padding-top:2.5rem">
+  <div class="section-inner">
+
+    <!-- Status Legend -->
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;padding:1rem 1.25rem;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);">
+      <span style="font-size:.82rem;font-weight:600;color:var(--text-muted);">Durum:</span>
+      <span class="order-status status-pending"  style="min-width:auto;padding:4px 12px;">Bekliyor</span>
+      <span class="order-status status-preparing" style="min-width:auto;padding:4px 12px;">Hazırlanıyor</span>
+      <span class="order-status status-delivered" style="min-width:auto;padding:4px 12px;">Teslim Edildi</span>
+      <span class="order-status status-cancelled" style="min-width:auto;padding:4px 12px;">İptal</span>
+    </div>
+
+    <div class="orders-grid"></div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-bottom" style="max-width:1280px;margin:0 auto;">
+    <span class="footer-copy">© 2026 FoodMicro. Tüm hakları saklıdır.</span>
+    <div class="footer-tech">
+      <span class="tech-tag">Order Service :8003</span>
+      <span class="tech-tag">Payment Service :8004</span>
+      <span class="tech-tag">MySQL RDS</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== CART SIDEBAR ===== -->
+<div class="cart-overlay" onclick="closeCart()"></div>
+<div class="cart-sidebar">
+  <div class="cart-header">
+    <h3 class="cart-title">🛒 Sepetim</h3>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span>Toplam:</span>
+      <span class="cart-total-price">0 ₺</span>
+    </div>
+    <button class="btn-checkout" onclick="checkout()">✓ Siparişi Tamamla</button>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+
+<script src="js/api.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
